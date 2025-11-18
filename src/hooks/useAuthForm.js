@@ -3,7 +3,7 @@
 //custom hook named useAuthForm manages validation logic
 
 import { useState } from 'react';
-
+import Dashboard from '../components/Dashboard'; 
 
 const useAuthForm = (initialMode = 'signup') => {
   const [authMode, setAuthMode] = useState(initialMode); // 'signup' or 'login'
@@ -64,6 +64,12 @@ const useAuthForm = (initialMode = 'signup') => {
     return Object.keys(newErrors).length === 0;
   };
 
+  // if(validateForm===true){
+  //   return(
+  //     <Dashboard/>
+  //   );
+  // }
+
   /**
    * Handles form submission
    */
@@ -73,6 +79,7 @@ const useAuthForm = (initialMode = 'signup') => {
     if (!validateForm()) {
       return;
     }
+    
 
     setIsLoading(true);
     
@@ -109,6 +116,9 @@ const useAuthForm = (initialMode = 'signup') => {
   const handleGoogleAuth = () => {
     console.log('Google OAuth clicked');
     alert('Google OAuth will be implemented in backend integration');
+    return (
+      <Dashboard/>
+    );
   };
 
   return {

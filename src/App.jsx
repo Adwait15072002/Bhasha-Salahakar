@@ -1,14 +1,9 @@
 //Entry point of application
-
-import LandingAuth from './components/Landingauth';
-import './index.css';
+import Dashboard from './components/Dashboard';
+import './App.css';
 
 function App() {
-  return (
-    <div className="App w-full min-h-screen">
-      <LandingAuth />
-    </div>
-  );
+  return <Dashboard />;
 }
 
 export default App;
