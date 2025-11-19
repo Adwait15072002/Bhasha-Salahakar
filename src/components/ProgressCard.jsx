@@ -9,7 +9,7 @@ const ProgressCard = ({
   const progressPercentage = calculateProgressPercentage(completedMinutes, goalMinutes);
 
   return (
-    <div className="bg-white/90 backdrop-blur-sm rounded-xl shadow-lg p-6 border-l-4 border-orange-600">
+    <div className="bg-white rounded-xl shadow-md p-6 border-l-4 border-orange-600">
       {/* Header */}
       <CardHeader 
         title={title}
