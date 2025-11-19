@@ -7,7 +7,7 @@ const Hero = () => {
   const features = [
     {
       icon: Mic,
-      text: "Real voice practice in 10+ Indian languages"
+      text: "Real voice practice in 4+ Indian languages"
     },
     {
       icon: Target,
@@ -15,15 +15,16 @@ const Hero = () => {
     },
     {
       icon: Globe,
-      text: "Learn Devanagari, Tamil, Telugu scripts"
+      text: "Familiarize yourself with Hindi, Tamil, Telugu,Bengali "
     }
   ];
 
   const popularLanguages = [
-    { name: "हिन्दी", speakers: "600M+" },
-    { name: "தமிழ்", speakers: "80M+" },
-    { name: "తెలుగు", speakers: "90M+" },
-    { name: "বাংলা", speakers: "270M+" }
+    { name: "हिन्दी", speakers: "500M+" },
+    { name: "मराठी", speakers: "83M+" },
+    { name: "తెలుగు", speakers: "81M+" },
+    { name: "தமிழ்", speakers: "69M+" },
+    { name: "ಕನ್ನಡ", speakers: "43M+" }
   ];
 
   return (
@@ -58,7 +59,7 @@ const Hero = () => {
 
       {/* Popular Languages */}
       <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4">
-        <p className="text-sm opacity-75 mb-3">Popular languages:</p>
+        <p className="text-xl opacity-75 mb-3">According to 2011 Census:</p>
         <div className="flex flex-wrap gap-2">
           {popularLanguages.map((language, index) => (
             <LanguageTag 

@@ -6,6 +6,7 @@ import ProgressCard from './ProgressCard';
 import LessonCard from './LessonCard';
 import BottomNav from './BottomNav';
 import useDashboard from '../hooks/useDashboard';
+import { getUIStrings } from '../constants/uiStrings';
 
 const Dashboard = () => {
   const {
@@ -19,35 +20,38 @@ const Dashboard = () => {
     handleLanguageSwitch
   } = useDashboard();
 
+  const uiStrings = getUIStrings(userData.nativeLanguage);
+
   return (
     <div className="w-full min-h-screen bg-gradient-to-b from-orange-500 via-red-500 to-pink-500 flex flex-col">
       {/* Header */}
       <Header 
         currentStreak={userData.currentStreak}
         userName={userData.name}
+        uiStrings={uiStrings}
       />
 
-      {/* Main Content - Full Width */}
+      {/* Main Content */}
       <main className="flex-1 overflow-auto px-6 py-6">
         <div className="w-full space-y-6">
           
           {/* Welcome Section */}
           <div className="text-white">
             <h1 className="text-3xl font-bold mb-2 drop-shadow-lg">
-              <span style={{ fontFamily: currentLanguage.fontFamily }}>
+              <span style={{ fontFamily: currentLanguage.native.fontFamily }}>
                 {greetingMessage}
               </span>
               , {userData.name}! 🙏
             </h1>
             <p className="text-white/90 text-lg drop-shadow">
-              You're learning{' '}
+              {uiStrings.learningStatus}{' '}
               <strong 
                 className="text-white" 
-                style={{ fontFamily: currentLanguage.fontFamily }}
+                style={{ fontFamily: currentLanguage.learning.fontFamily }}
               >
-                {currentLanguage.nativeName} ({currentLanguage.name})
+                {currentLanguage.learning.nativeName} ({currentLanguage.learning.name})
               </strong>
-              {' '}• Beginner Level
+              {' '}• {uiStrings.beginner}
             </p>
           </div>
 
@@ -55,16 +59,16 @@ const Dashboard = () => {
           <div className="bg-white/90 backdrop-blur-sm rounded-xl p-4 border border-white/50 shadow-lg">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600 mb-1">Learning:</p>
+                <p className="text-sm text-gray-600 mb-1">{uiStrings.learning}</p>
                 <div className="flex items-center gap-2">
                   <span 
                     className="text-2xl" 
-                    style={{ fontFamily: currentLanguage.fontFamily }}
+                    style={{ fontFamily: currentLanguage.learning.fontFamily }}
                   >
-                    {currentLanguage.nativeName}
+                    {currentLanguage.learning.nativeName}
                   </span>
                   <span className="text-lg font-semibold text-gray-800">
-                    ({currentLanguage.name})
+                    ({currentLanguage.learning.name})
                   </span>
                 </div>
               </div>
@@ -73,7 +77,7 @@ const Dashboard = () => {
                 className="bg-white px-4 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 border border-gray-300 flex items-center gap-2 transition-colors shadow-sm"
               >
                 <Globe className="w-4 h-4" />
-                Switch Language
+                {uiStrings.switchLanguage}
               </button>
             </div>
           </div>
@@ -82,13 +86,13 @@ const Dashboard = () => {
           <ProgressCard
             goalMinutes={userData.todayGoalMinutes}
             completedMinutes={userData.todayCompletedMinutes}
-            title="आज का लक्ष्य (Today's Goal)"
+            uiStrings={uiStrings}
           />
 
           {/* Lessons Section */}
           <div>
             <h2 className="text-xl font-bold text-white mb-4 drop-shadow-lg">
-              आपके पाठ (Your Lessons)
+              {uiStrings.yourLessons}
             </h2>
             <div className="grid gap-4">
               {lessons.map((lesson) => (
@@ -96,7 +100,8 @@ const Dashboard = () => {
                   key={lesson.id}
                   lesson={lesson}
                   onStartLesson={handleStartLesson}
-                  languageFontFamily={currentLanguage.fontFamily}
+                  languageFontFamily={currentLanguage.learning.fontFamily}
+                  uiStrings={uiStrings}
                 />
               ))}
             </div>
@@ -109,6 +114,7 @@ const Dashboard = () => {
       <BottomNav 
         activeTab={activeTab}
         onTabChange={handleTabChange}
+        uiStrings={uiStrings}
       />
     </div>
   );

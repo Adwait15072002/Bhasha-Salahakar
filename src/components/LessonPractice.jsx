@@ -6,11 +6,21 @@
 import PracticeHeader from './PracticeHeader';
 import PhraseCard from './PhraseCard';
 import RecordingButton from './RecordingButton';
-import useLessonPractice from '../hooks/useLessonPractice';
-
 import FeedbackCard from './FeedbackCard';
+import useLessonPractice from '../hooks/useLessonPractice';
+import { getUIStrings } from '../constants/uiStrings';
 
 const LessonPractice = () => {
+  const nativeLanguage = 'hi';  // Hindi
+  const learningLanguage = 'kn'; // Kannada
+  
+  const uiStrings = getUIStrings(nativeLanguage);
+  
+  const languageInfo = {
+    hi: { name: 'Hindi', nativeName: 'हिन्दी', fontFamily: "'Noto Sans Devanagari', sans-serif" },
+    kn: { name: 'Kannada', nativeName: 'ಕನ್ನಡ', fontFamily: "'Noto Sans Kannada', sans-serif" }
+  };
+
   const {
     currentPhrase,
     currentPhraseIndex,
@@ -33,51 +43,48 @@ const LessonPractice = () => {
     exitLesson
   } = useLessonPractice();
 
-  const fontFamily = "'Noto Sans Devanagari', sans-serif";
-
   return (
     <div className="min-h-screen bg-gradient-to-b from-orange-500 via-red-500 to-pink-500 flex flex-col">
-      {/* Header */}
       <PracticeHeader
-        lessonTitle="पाठ 1: नमस्ते और परिचय"
+        lessonTitle={uiStrings.lessonTitle}
         currentIndex={currentPhraseIndex}
         total={totalPhrases}
         progressPercentage={progressPercentage}
         onExit={exitLesson}
+        uiStrings={uiStrings}
       />
 
-      {/* Main Content */}
       <main className="flex-1 flex items-center justify-center p-8 overflow-auto">
         <div className="max-w-2xl w-full space-y-8">
           
-          {/* Phrase Card */}
           <PhraseCard
-            englishText={currentPhrase.english}
-            nativeText={currentPhrase.native}
+            sourceText={currentPhrase.sourceText}
+            targetText={currentPhrase.targetText}
             romanizedText={currentPhrase.romanized}
             showRomanization={showRomanization}
             onToggleRomanization={toggleRomanization}
-            fontFamily={fontFamily}
+            sourceFontFamily={languageInfo[nativeLanguage].fontFamily}
+            targetFontFamily={languageInfo[learningLanguage].fontFamily}
+            uiStrings={uiStrings}
+            learningLanguageName={languageInfo[learningLanguage].nativeName}
           />
 
-          {/* Recording Button */}
           {!showFeedback && (
             <RecordingButton
               isRecording={isRecording}
               onStart={startRecording}
               onStop={stopRecording}
+              uiStrings={uiStrings}
             />
           )}
 
-          {/* Processing State */}
           {isProcessing && (
             <div className="text-center">
               <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-white border-t-transparent"></div>
-              <p className="text-white mt-4 font-medium">Analyzing your pronunciation...</p>
+              <p className="text-white mt-4 font-medium">{uiStrings.analyzing}</p>
             </div>
           )}
 
-          {/* Feedback Card */}
           {showFeedback && !isProcessing && (
             <FeedbackCard
               feedback={feedback}
@@ -85,7 +92,8 @@ const LessonPractice = () => {
               onPlayRecording={playUserRecording}
               onTryAgain={tryAgain}
               onNext={nextPhrase}
-              fontFamily={fontFamily}
+              fontFamily={languageInfo[learningLanguage].fontFamily}
+              uiStrings={uiStrings}
             />
           )}
 

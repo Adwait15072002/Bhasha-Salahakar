@@ -5,7 +5,8 @@ const useDashboard = () => {
   // User data state
   const [userData, setUserData] = useState({
     name: 'Priya',
-    targetLanguage: 'hi', // Hindi
+    nativeLanguage: 'hi', // Hindi
+    learningLanguage: 'kn', // Kannada
     currentStreak: 5,
     todayGoalMinutes: 15,
     todayCompletedMinutes: 0
@@ -50,28 +51,34 @@ const useDashboard = () => {
    * Gets current language info
    */
   const getCurrentLanguageInfo = () => {
-    // In real app, this would fetch from user's selected language
-    return {
-      code: 'hi',
-      name: 'Hindi',
-      nativeName: 'हिन्दी',
-      fontFamily: "'Noto Sans Devanagari', sans-serif"
-    };
+        const languageMap = {
+        en: { name: 'English', nativeName: 'English', fontFamily: 'sans-serif' },
+        hi: { name: 'Hindi', nativeName: 'हिन्दी', fontFamily: "'Noto Sans Devanagari', sans-serif" },
+        ta: { name: 'Tamil', nativeName: 'தமிழ்', fontFamily: "'Noto Sans Tamil', sans-serif" },
+        te: { name: 'Telugu', nativeName: 'తెలుగు', fontFamily: "'Noto Sans Telugu', sans-serif" },
+        kn: { name: 'Kannada', nativeName: 'ಕನ್ನಡ', fontFamily: "'Noto Sans Kannada', sans-serif" },
+        mr: { name: 'Marathi', nativeName: 'मराठी', fontFamily: "'Noto Sans Devanagari', sans-serif" }
+      };
+      return {
+        native: languageMap[userData.nativeLanguage],
+        learning: languageMap[userData.learningLanguage]
+      };
   };
 
   /**
    * Gets greeting message based on time of day
    */
   const getGreetingMessage = () => {
-    const currentHour = new Date().getHours();
+      const greetings = {
+      en: 'Hello',
+      hi: 'नमस्ते',
+      ta: 'வணக்கம்',
+      te: 'నమస్కారం',
+      kn: 'ನಮಸ್ಕಾರ',
+      mr: 'नमस्कार'
+    };
     
-    if (currentHour < 12) {
-      return 'सुप्रभात'; // Good morning in Hindi
-    } else if (currentHour < 18) {
-      return 'नमस्ते'; // Hello in Hindi
-    } else {
-      return 'शुभ संध्या'; // Good evening in Hindi
-    }
+    return greetings[userData.nativeLanguage] || greetings.en;
   };
 
   return {

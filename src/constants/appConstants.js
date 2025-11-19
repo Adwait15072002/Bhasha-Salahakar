@@ -1,26 +1,9 @@
-export const INDIAN_LANGUAGES = {
-  hi: {
-    code: 'hi',
-    name: 'Hindi',
-    nativeName: 'हिन्दी',
-    flag: '🇮🇳',
-    fontFamily: "'Noto Sans Devanagari', sans-serif"
-  },
-  ta: {
-    code: 'ta',
-    name: 'Tamil',
-    nativeName: 'தமிழ்',
-    flag: '🇮🇳',
-    fontFamily: "'Noto Sans Tamil', sans-serif"
-  }
-};
-
 export const LESSON_DATA = [
   {
     id: 1,
     titleEnglish: 'Basic Greetings & Introductions',
-    titleNative: 'नमस्ते और परिचय',
-    description: 'Learn essential Hindi greetings',
+    titleNative: 'ನಮಸ್ಕಾರ ಮತ್ತು ಪರಿಚಯ',  // Kannada
+    description: 'Learn essential Kannada greetings',
     estimatedMinutes: 10,
     phraseCount: 8,
     emoji: '🙏',
@@ -29,8 +12,8 @@ export const LESSON_DATA = [
   {
     id: 2,
     titleEnglish: 'Numbers & Counting',
-    titleNative: 'संख्याएं और गिनती',
-    description: 'Count from 1 to 100 in Hindi',
+    titleNative: 'ಸಂಖ್ಯೆಗಳು ಮತ್ತು ಎಣಿಕೆ',  // Kannada
+    description: 'Count from 1 to 100 in Kannada',
     estimatedMinutes: 12,
     phraseCount: 10,
     emoji: '🔢',
@@ -39,7 +22,7 @@ export const LESSON_DATA = [
   {
     id: 3,
     titleEnglish: 'Food & Drinks',
-    titleNative: 'खाना और पेय',
+    titleNative: 'ಆಹಾರ ಮತ್ತು ಪಾನೀಯಗಳು',  // Kannada
     description: 'Order at restaurants',
     estimatedMinutes: 15,
     phraseCount: 12,

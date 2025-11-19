@@ -1,4 +1,3 @@
-//Lesson Progress and Exit Button
 import { X } from 'lucide-react';
 
 const PracticeHeader = ({ 
@@ -6,7 +5,8 @@ const PracticeHeader = ({
   currentIndex, 
   total, 
   progressPercentage, 
-  onExit 
+  onExit,
+  uiStrings
 }) => {
   return (
     <header className="px-6 py-4 flex items-center justify-between border-b border-white/20">
@@ -15,7 +15,7 @@ const PracticeHeader = ({
         className="text-white hover:text-white/80 font-medium flex items-center gap-2"
       >
         <X className="w-5 h-5" />
-        Exit
+        {uiStrings.exit}
       </button>
       
       <div className="flex-1 max-w-md mx-4">

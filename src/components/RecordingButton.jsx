@@ -1,11 +1,10 @@
-
-
 import { Mic } from 'lucide-react';
 
 const RecordingButton = ({ 
   isRecording, 
   onStart, 
-  onStop 
+  onStop,
+  uiStrings
 }) => {
   const handleClick = () => {
     if (isRecording) {
@@ -28,7 +27,6 @@ const RecordingButton = ({
         <Mic className="w-16 h-16 text-white" />
       </button>
 
-      {/* Recording Status */}
       <div className="mt-6">
         {isRecording ? (
           <div className="flex flex-col items-center gap-2">
@@ -38,13 +36,10 @@ const RecordingButton = ({
               <div className="w-1 h-6 bg-red-500 rounded animate-pulse" style={{animationDelay: '300ms'}}></div>
               <div className="w-1 h-10 bg-red-500 rounded animate-pulse" style={{animationDelay: '450ms'}}></div>
             </div>
-            <p className="text-red-600 font-medium">सुन रहा हूँ... (Listening...)</p>
+            <p className="text-red-600 font-medium">{uiStrings.listening}</p>
           </div>
         ) : (
-          <p className="text-gray-600">
-            माइक्रोफोन पर क्लिक करें और बोलें<br/>
-            (Click microphone and speak)
-          </p>
+          <p className="text-gray-600">{uiStrings.clickAndSpeak}</p>
         )}
       </div>
     </div>

@@ -4,6 +4,7 @@
 
 import Input from './Input';
 import Button from './Buttons';
+import LanguageSelect from './LanguageSelect';
 import useAuthForm from '../hooks/useAuthForm';
 
 const AuthForm = () => {
@@ -51,6 +52,30 @@ const AuthForm = () => {
             disabled={isLoading}
             required
           />
+        )}
+
+        {/* Language Selection (only for signup) */}
+        {isSignupMode && (
+          <>
+            <LanguageSelect
+              label="I speak (My language):"
+              name="nativeLanguage"
+              value={formData.nativeLanguage}
+              onChange={handleInputChange}
+              error={errors.nativeLanguage}
+              disabled={isLoading}
+            />
+
+            <LanguageSelect
+              label="I want to learn:"
+              name="learningLanguage"
+              value={formData.learningLanguage}
+              onChange={handleInputChange}
+              error={errors.learningLanguage}
+              disabled={isLoading}
+              excludeLanguage={formData.nativeLanguage}
+            />
+          </>
         )}
 
         {/* Email Field */}

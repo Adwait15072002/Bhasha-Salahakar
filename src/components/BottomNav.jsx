@@ -2,11 +2,11 @@
 
 import { Home, BarChart, User } from 'lucide-react';
 
-const BottomNav = ({ activeTab = 'home', onTabChange }) => {
+const BottomNav = ({ activeTab = 'home', onTabChange, uiStrings }) => {
   const navigationItems = [
-    { id: 'home', label: 'Home', icon: Home },
-    { id: 'progress', label: 'Progress', icon: BarChart },
-    { id: 'profile', label: 'Profile', icon: User }
+    { id: 'home', label: uiStrings.home, icon: Home },
+    { id: 'progress', label: uiStrings.progress, icon: BarChart },
+    { id: 'profile', label: uiStrings.profile, icon: User }
   ];
 
   return (

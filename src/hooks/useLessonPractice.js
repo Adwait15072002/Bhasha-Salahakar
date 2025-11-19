@@ -16,25 +16,31 @@ const useLessonPractice = () => {
 
   // Mock phrases
   const phrases = [
-    {
-      id: 1,
-      english: "Hello, how are you?",
-      native: "नमस्ते, आप कैसे हैं?",
-      romanized: "Namaste, aap kaise hain?"
-    },
-    {
-      id: 2,
-      english: "I am fine, thank you",
-      native: "मैं ठीक हूँ, धन्यवाद",
-      romanized: "Main theek hoon, dhanyavaad"
-    },
-    {
-      id: 3,
-      english: "What is your name?",
-      native: "आपका नाम क्या है?",
-      romanized: "Aapka naam kya hai?"
-    }
-  ];
+  {
+    id: 1,
+    sourceText: "नमस्ते, आप कैसे हैं?",  // Hindi (native)
+    targetText: "ನಮಸ್ಕಾರ, ನೀವು ಹೇಗಿದ್ದೀರಿ?",  // Kannada (learning)
+    romanized: "Namaskāra, nīvu hēgiddīri?",
+    sourceLanguage: "hi",
+    targetLanguage: "kn"
+  },
+  {
+    id: 2,
+    sourceText: "मैं ठीक हूँ, धन्यवाद",  // Hindi
+    targetText: "ನಾನು ಚೆನ್ನಾಗಿದ್ದೇನೆ, ಧನ್ಯವಾದಗಳು",  // Kannada
+    romanized: "Nānu cennāgiddēne, dhan'yavādagaḷu",
+    sourceLanguage: "hi",
+    targetLanguage: "kn"
+  },
+  {
+    id: 3,
+    sourceText: "आपका नाम क्या है?",  // Hindi
+    targetText: "ನಿಮ್ಮ ಹೆಸರೇನು?",  // Kannada
+    romanized: "Nim'ma hesarēnu?",
+    sourceLanguage: "hi",
+    targetLanguage: "kn"
+  }
+];
 
   const currentPhrase = phrases[currentPhraseIndex];
   const totalPhrases = phrases.length;

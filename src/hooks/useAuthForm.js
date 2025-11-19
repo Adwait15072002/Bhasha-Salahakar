@@ -3,14 +3,16 @@
 //custom hook named useAuthForm manages validation logic
 
 import { useState } from 'react';
-import Dashboard from '../components/Dashboard'; 
+ 
 
 const useAuthForm = (initialMode = 'signup') => {
   const [authMode, setAuthMode] = useState(initialMode); // 'signup' or 'login'
   const [formData, setFormData] = useState({
     email: '',
     password: '',
-    name: '' // Only used for signup
+    name: '' ,// Only used for signup
+    nativeLanguage: 'en',    //User's UI language
+    learningLanguage: 'hi'   //Language they want to learn
   });
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
@@ -60,15 +62,24 @@ const useAuthForm = (initialMode = 'signup') => {
       newErrors.name = 'Name is required';
     }
 
+    // Language validation
+    if (authMode === 'signup') {
+      if (!formData.nativeLanguage) {
+        newErrors.nativeLanguage = 'Please select your language';
+      }
+      if (!formData.learningLanguage) {
+        newErrors.learningLanguage = 'Please select language to learn';
+      }
+      if (formData.nativeLanguage === formData.learningLanguage) {
+        newErrors.learningLanguage = 'Cannot be same as your language';
+      }
+    }
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  // if(validateForm===true){
-  //   return(
-  //     <Dashboard/>
-  //   );
-  // }
+  
 
   /**
    * Handles form submission
@@ -106,7 +117,9 @@ const useAuthForm = (initialMode = 'signup') => {
    */
   const toggleAuthMode = () => {
     setAuthMode(prevMode => prevMode === 'signup' ? 'login' : 'signup');
-    setFormData({ email: '', password: '', name: '' });
+    setFormData({ email: '', password: '', name: '',
+  nativeLanguage: 'en', 
+  learningLanguage: 'hi'  });
     setErrors({});
   };
 
@@ -114,11 +127,8 @@ const useAuthForm = (initialMode = 'signup') => {
    * Handles Google OAuth (placeholder)
    */
   const handleGoogleAuth = () => {
-    console.log('Google OAuth clicked');
-    alert('Google OAuth will be implemented in backend integration');
-    return (
-      <Dashboard/>
-    );
+  console.log('Google OAuth clicked');
+  alert('Google OAuth will be implemented in backend integration');
   };
 
   return {

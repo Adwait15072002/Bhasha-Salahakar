@@ -2,7 +2,7 @@
 
 import { MessageCircle, User, Flame } from 'lucide-react';
 
-const Header = ({ currentStreak, userName = 'User' }) => {
+const Header = ({ currentStreak, userName = 'User', uiStrings }) => {
   const handleProfileClick = () => {
     console.log('Profile clicked');
   };
@@ -12,7 +12,7 @@ const Header = ({ currentStreak, userName = 'User' }) => {
       {/* Logo Section */}
       <div className="flex items-center gap-3">
         <MessageCircle className="w-8 h-8 text-white" />
-        <span className="text-xl font-bold text-white drop-shadow-lg">भाषा सलाहकार</span>
+        <span className="text-xl font-bold text-white drop-shadow-lg">LanguageMentor</span>
       </div>
 
       {/* Right Side: Streak and Profile */}
