@@ -3,19 +3,23 @@
 //custom hook named useAuthForm manages validation logic
 
 import { useState } from 'react';
+import { signup, login, saveAuthData } from '../services/api/auth-service';
  
 
 const useAuthForm = (initialMode = 'signup') => {
-  const [authMode, setAuthMode] = useState(initialMode); // 'signup' or 'login'
+
+  const [isLogin, setIsLogin] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
+
+//  const [authMode, setAuthMode] = useState(initialMode); // 'signup' or 'login'
   const [formData, setFormData] = useState({
     email: '',
     password: '',
     name: '' ,// Only used for signup
-    nativeLanguage: 'en',    //User's UI language
-    learningLanguage: 'hi'   //Language they want to learn
+    nativeLanguage: 'hi',    //User's UI language
+    learningLanguage: 'kn'   //Language they want to learn
   });
-  const [errors, setErrors] = useState({});
-  const [isLoading, setIsLoading] = useState(false);
 
   /**
    * Handles input field changes

@@ -1,8 +1,3 @@
-/**
- * Progress Screen - Simplified
- * Everything in one component
- */
-
 import { Flame, BookOpen, Clock } from 'lucide-react';
 import Header from './Header';
 import BottomNav from './BottomNav';
