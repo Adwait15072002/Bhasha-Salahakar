@@ -31,7 +31,15 @@ export const UI_STRINGS = {
     hearOriginal: "Hear Original",
     tryAgain: "Try Again",
     nextPhrase: "Next Phrase",
-    lessonComplete: "Lesson Complete! 🎉"
+    lessonComplete: "Lesson Complete! 🎉",
+    dayStreak: "Day Streak",
+    lessons: "Lessons",
+    minutes: "Minutes",
+    weeklyActivity: "Weekly Activity",
+    skills: "Skills",
+    pronunciation: "Pronunciation",
+    vocabulary: "Vocabulary",
+    listening: "Listening"
   },
   hi: {
     greeting: "नमस्ते",
@@ -65,7 +73,15 @@ export const UI_STRINGS = {
     hearOriginal: "मूल सुनें",
     tryAgain: "फिर से कोशिश करें",
     nextPhrase: "अगला वाक्यांश",
-    lessonComplete: "पाठ पूर्ण! 🎉"
+    lessonComplete: "पाठ पूर्ण! 🎉",
+    dayStreak: "दिन की लकीर",
+    lessons: "पाठ",
+    minutes: "मिनट",
+    weeklyActivity: "साप्ताहिक गतिविधि",
+    skills: "कौशल",
+    pronunciation: "उच्चारण",
+    vocabulary: "शब्दावली",
+    listening: "सुनना"
   },
   ta: {
     greeting: "வணக்கம்",
@@ -99,7 +115,15 @@ export const UI_STRINGS = {
     hearOriginal: "அசலைக் கேளுங்கள்",
     tryAgain: "மீண்டும் முயற்சிக்கவும்",
     nextPhrase: "அடுத்த சொற்றொடர்",
-    lessonComplete: "பாடம் முடிந்தது! 🎉"
+    lessonComplete: "பாடம் முடிந்தது! 🎉",
+    dayStreak: "நாள் தொடர்",
+    lessons: "பாடங்கள்",
+    minutes: "நிமிடங்கள்",
+    weeklyActivity: "வாராந்திர செயல்பாடு",
+    skills: "திறன்கள்",
+    pronunciation: "உச்சரிப்பு",
+    vocabulary: "சொல்வளம்",
+    listening: "கேட்டல்"
   },
   te: {
     greeting: "నమస్కారం",
@@ -133,7 +157,15 @@ export const UI_STRINGS = {
     hearOriginal: "అసలు వినండి",
     tryAgain: "మళ్ళీ ప్రయత్నించండి",
     nextFrase: "తదుపరి పదబంధం",
-    lessonComplete: "పాఠం పూర్తయింది! 🎉"
+    lessonComplete: "పాఠం పూర్తయింది! 🎉",
+    dayStreak: "రోజుల పరంపర",
+    lessons: "పాఠాలు",
+    minutes: "నిమిషాలు",
+    weeklyActivity: "వారపు కార్యాచరణ",
+    skills: "నైపుణ్యాలు",
+    pronunciation: "ఉచ్ఛారణ",
+    vocabulary: "పదజాలం",
+    listening: "వినడం"
   },
   kn: {
     greeting: "ನಮಸ್ಕಾರ",
@@ -167,7 +199,15 @@ export const UI_STRINGS = {
     hearOriginal: "Hear Original",
     tryAgain: "ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ",
     nextPhrase: "ಮುಂದಿನ ನುಡಿಗಟ್ಟು",
-    lessonComplete: "ಪಾಠ ಪೂರ್ಣಗೊಂಡಿದೆ! 🎉"
+    lessonComplete: "ಪಾಠ ಪೂರ್ಣಗೊಂಡಿದೆ! 🎉",
+    dayStreak: "ದಿನದ ಸರಣಿ",
+    lessons: "ಪಾಠಗಳು",
+    minutes: "ನಿಮಿಷಗಳು",
+    weeklyActivity: "ವಾರದ ಚಟುವಟಿಕೆ",
+    skills: "ಕೌಶಲ್ಯಗಳು",
+    pronunciation: "ಉಚ್ಚಾರಣೆ",
+    vocabulary: "ಶಬ್ದಕೋಶ",
+    listening: "ಕೇಳುವಿಕೆ"
   },
   mr: {
     greeting: "नमस्कार",
@@ -201,7 +241,15 @@ export const UI_STRINGS = {
     hearOriginal: "मूळ ऐका",
     tryAgain: "पुन्हा प्रयत्न करा",
     nextPhrase: "पुढील वाक्यांश",
-    lessonComplete: "धडा पूर्ण झाला! 🎉"
+    lessonComplete: "धडा पूर्ण झाला! 🎉",
+    dayStreak: "दिवसांची मालिका",
+    lessons: "धडे",
+    minutes: "मिनिटे",
+    weeklyActivity: "साप्ताहिक क्रियाकलाप",
+    skills: "कौशल्ये",
+    pronunciation: "उच्चार",
+    vocabulary: "शब्दसंग्रह",
+    listening: "ऐकणे"
   }
 };
 
