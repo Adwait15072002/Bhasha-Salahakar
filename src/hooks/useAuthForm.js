@@ -1,149 +1,105 @@
-//Handles Authentication Logic independent of the AuthForm UI
+//Handles Authentication Logic
 
-//custom hook named useAuthForm manages validation logic
+//calls backend apis
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { signup, login, saveAuthData } from '../services/api/auth-service';
- 
 
-const useAuthForm = (initialMode = 'signup') => {
-
+const useAuthForm = () => {
   const [isLogin, setIsLogin] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
 
-//  const [authMode, setAuthMode] = useState(initialMode); // 'signup' or 'login'
   const [formData, setFormData] = useState({
     email: '',
     password: '',
-    name: '' ,// Only used for signup
-    nativeLanguage: 'hi',    //User's UI language
-    learningLanguage: 'kn'   //Language they want to learn
+    name: '',
+    nativeLanguage: 'hi',
+    learningLanguage: 'kn'
   });
 
-  /**
-   * Handles input field changes
-   */
+  useEffect(() => {
+    if (error) {
+      const timer = setTimeout(() => {
+        setError('');
+      }, 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [error]);
+
   const handleInputChange = (event) => {
     const { name, value } = event.target;
     setFormData(prevData => ({
       ...prevData,
       [name]: value
     }));
-    
-    // Clear error for this field when user starts typing
-    if (errors[name]) {
-      setErrors(prevErrors => ({
-        ...prevErrors,
-        [name]: ''
-      }));
+    if (error) {
+      setError('');
     }
   };
 
-  /**
-   * Validates form fields
-   * Returns true if valid, false otherwise
-   */
-  const validateForm = () => {
-    const newErrors = {};
-
-    // Email validation
-    if (!formData.email) {
-      newErrors.email = 'Email is required';
-    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = 'Email is invalid';
-    }
-
-    // Password validation
-    if (!formData.password) {
-      newErrors.password = 'Password is required';
-    } else if (formData.password.length < 6) {
-      newErrors.password = 'Password must be at least 6 characters';
-    }
-
-    // Name validation (only for signup)
-    if (authMode === 'signup' && !formData.name) {
-      newErrors.name = 'Name is required';
-    }
-
-    // Language validation
-    if (authMode === 'signup') {
-      if (!formData.nativeLanguage) {
-        newErrors.nativeLanguage = 'Please select your language';
-      }
-      if (!formData.learningLanguage) {
-        newErrors.learningLanguage = 'Please select language to learn';
-      }
-      if (formData.nativeLanguage === formData.learningLanguage) {
-        newErrors.learningLanguage = 'Cannot be same as your language';
-      }
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  
-
-  /**
-   * Handles form submission
-   */
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    
-    if (!validateForm()) {
-      return;
-    }
-    
-
+  const handleSubmit = async (onSuccess) => {
+    setError('');
     setIsLoading(true);
     
     try {
-      
-      console.log(`${authMode} attempt with:`, formData);
-      
-      
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      
-      alert(`${authMode} successful!`);
-      
-    } catch (error) {
-      console.error(`${authMode} error:`, error);
-      setErrors({ general: 'Something went wrong. Please try again.' });
+      let response;
+
+      if (isLogin) {
+        response = await login({
+          email: formData.email,
+          password: formData.password
+        });
+      } else {
+        response = await signup({
+          name: formData.name,
+          email: formData.email,
+          password: formData.password,
+          nativeLanguage: formData.nativeLanguage,
+          learningLanguage: formData.learningLanguage
+        });
+      }
+
+      if (response.success && response.data) {
+        saveAuthData(response.data);
+        if (onSuccess) {
+          onSuccess(response.data.user);
+        }
+        return response.data;
+      }
+
+    } catch (err) {
+      const errorMessage = 
+        err.response?.data?.message || 
+        err.message || 
+        'Authentication failed. Please try again.';
+      setError(errorMessage);
+      throw err;
     } finally {
       setIsLoading(false);
     }
   };
 
-  /**
-   * Toggles between signup and login modes
-   */
   const toggleAuthMode = () => {
-    setAuthMode(prevMode => prevMode === 'signup' ? 'login' : 'signup');
-    setFormData({ email: '', password: '', name: '',
-  nativeLanguage: 'en', 
-  learningLanguage: 'hi'  });
-    setErrors({});
-  };
-
-  /**
-   * Handles Google OAuth (placeholder)
-   */
-  const handleGoogleAuth = () => {
-  console.log('Google OAuth clicked');
-  alert('Google OAuth will be implemented in backend integration');
+    setIsLogin(prev => !prev);
+    setFormData({
+      email: '',
+      password: '',
+      name: '',
+      nativeLanguage: 'hi',
+      learningLanguage: 'kn'
+    });
+    setError('');
   };
 
   return {
-    authMode,
+    isLogin,
     formData,
-    errors,
+    error,
     isLoading,
     handleInputChange,
     handleSubmit,
-    toggleAuthMode,
-    handleGoogleAuth
+    toggleAuthMode
   };
 };
 
