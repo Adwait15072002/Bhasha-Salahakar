@@ -3,7 +3,7 @@ import Dashboard from './components/Dashboard';
 import LessonPractice from './components/LessonPractice';
 import LandingAuth from './components/Landingauth';
 import ProgressScreen from './components/ProgressScreen';
-import { getAuthData, isAuthenticated } from './services/api/auth-service';
+import { getAuthData, isAuthenticated, clearAuthData} from './services/api/auth-service';
 import './App.css';
 import { useState, useEffect } from 'react';
 
@@ -45,6 +45,19 @@ function App() {
     setSelectedLesson(null);
   };
 
+  const handleLogout = () => {
+    console.log('App.jsx: Logging out...');
+    if (window.confirm('Are you sure you want to logout?')) {
+      clearAuthData();
+      setUser(null);
+      setIsLoggedIn(false);
+      setCurrentScreen('auth');
+      setSelectedLesson(null);
+      
+      console.log('Logged out successfully');
+    }
+  };
+
   const renderScreen = () => {
     if (!isLoggedIn) {
       return <LandingAuth onAuthSuccess={handleAuthSuccess} />;
@@ -57,6 +70,7 @@ function App() {
             user={user} 
             onStartLesson={handleStartLesson}
             onProfileClick={handleProfileClick}
+            onLogout={handleLogout} 
           />
         );
       

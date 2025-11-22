@@ -39,7 +39,8 @@ export const UI_STRINGS = {
     skills: "Skills",
     pronunciation: "Pronunciation",
     vocabulary: "Vocabulary",
-    listening: "Listening"
+    listening: "Listening",
+    logout: "Logout"
   },
   hi: {
     greeting: "नमस्ते",
@@ -81,7 +82,8 @@ export const UI_STRINGS = {
     skills: "कौशल",
     pronunciation: "उच्चारण",
     vocabulary: "शब्दावली",
-    listening: "सुनना"
+    listening: "सुनना",
+    logout: "लॉग आउट"
   },
   ta: {
     greeting: "வணக்கம்",
@@ -123,7 +125,8 @@ export const UI_STRINGS = {
     skills: "திறன்கள்",
     pronunciation: "உச்சரிப்பு",
     vocabulary: "சொல்வளம்",
-    listening: "கேட்டல்"
+    listening: "கேட்டல்",
+    logout: "வெளியேறு"
   },
   te: {
     greeting: "నమస్కారం",
@@ -165,7 +168,8 @@ export const UI_STRINGS = {
     skills: "నైపుణ్యాలు",
     pronunciation: "ఉచ్ఛారణ",
     vocabulary: "పదజాలం",
-    listening: "వినడం"
+    listening: "వినడం",
+    logout: "వెళ్లు"
   },
   kn: {
     greeting: "ನಮಸ್ಕಾರ",
@@ -207,7 +211,8 @@ export const UI_STRINGS = {
     skills: "ಕೌಶಲ್ಯಗಳು",
     pronunciation: "ಉಚ್ಚಾರಣೆ",
     vocabulary: "ಶಬ್ದಕೋಶ",
-    listening: "ಕೇಳುವಿಕೆ"
+    listening: "ಕೇಳುವಿಕೆ",
+    logout: "ಲೋಗೋಟ್"
   },
   mr: {
     greeting: "नमस्कार",
@@ -249,7 +254,8 @@ export const UI_STRINGS = {
     skills: "कौशल्ये",
     pronunciation: "उच्चार",
     vocabulary: "शब्दसंग्रह",
-    listening: "ऐकणे"
+    listening: "ऐकणे",
+    logout: "लॉग आउट"
   }
 };
 

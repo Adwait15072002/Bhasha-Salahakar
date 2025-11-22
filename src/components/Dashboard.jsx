@@ -8,7 +8,7 @@ import BottomNav from './BottomNav';
 import useDashboard from '../hooks/useDashboard';
 import { getUIStrings } from '../constants/uiStrings';
 
-const Dashboard = ({ user, onStartLesson, onProfileClick }) => {
+const Dashboard = ({ user, onStartLesson, onProfileClick, onLogout }) => {
   const {
     userData,
     lessons,
@@ -33,6 +33,15 @@ const Dashboard = ({ user, onStartLesson, onProfileClick }) => {
       onStartLesson(lessonId);
     } else {
       console.error('onStartLesson prop not provided to Dashboard!');
+    }
+  };
+
+  const handleLogout = () => {
+    console.log('Dashboard: Logout clicked');
+    if (onLogout) {
+      onLogout();
+    } else {
+      console.error('onLogout prop not provided to Dashboard!');
     }
   };
 
@@ -130,6 +139,7 @@ const Dashboard = ({ user, onStartLesson, onProfileClick }) => {
         activeTab={activeTab}
         onTabChange={handleTabChange}
         uiStrings={uiStrings}
+        onLogout={handleLogout} 
       />
     </div>
   );

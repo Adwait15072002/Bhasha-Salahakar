@@ -1,12 +1,19 @@
 //For Navigation
 
-import { Home, BarChart, User } from 'lucide-react';
+import { Home, BarChart, LogOut } from 'lucide-react';
 
-const BottomNav = ({ activeTab = 'home', onTabChange, uiStrings }) => {
+const BottomNav = ({ activeTab = 'home', onTabChange, uiStrings, onLogout }) => {
+  const handleLogoutClick = () => {
+    console.log('BottomNav: Logout clicked');
+    if (onLogout) {
+      onLogout();
+    }
+  };
+
   const navigationItems = [
     { id: 'home', label: uiStrings.home, icon: Home },
     { id: 'progress', label: uiStrings.progress, icon: BarChart },
-    { id: 'profile', label: uiStrings.profile, icon: User }
+    { id: 'logout', label: uiStrings.logout || 'Logout', icon: LogOut, onLogout: true }
   ];
 
   return (
@@ -18,12 +25,20 @@ const BottomNav = ({ activeTab = 'home', onTabChange, uiStrings }) => {
           
           const activeStyles = isActive 
             ? 'text-white' 
-            : 'text-white/60 hover:text-white/80';
+            : id === 'logout'
+              ? 'text-red-300 hover:text-red-100'
+              : 'text-white/60 hover:text-white/80';
 
           return (
             <button
               key={id}
-              onClick={() => onTabChange(id)}
+              onClick={() => {
+                if (id === 'logout') {
+                  handleLogoutClick();
+                } else {
+                  onTabChange(id);
+                }
+              }}
               className={`flex flex-col items-center gap-1 transition-colors ${activeStyles}`}
               aria-label={label}
               aria-current={isActive ? 'page' : undefined}
