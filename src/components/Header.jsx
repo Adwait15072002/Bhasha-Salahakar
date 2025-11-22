@@ -2,9 +2,15 @@
 
 import { MessageCircle, User, Flame } from 'lucide-react';
 
-const Header = ({ currentStreak, userName = 'User', uiStrings }) => {
+const Header = ({ currentStreak, userName = 'User', uiStrings, onProfileClick}) => {
   const handleProfileClick = () => {
     console.log('Profile clicked');
+     if (onProfileClick) {
+      console.log('Header: Calling onProfileClick');
+      onProfileClick();
+    } else {
+      console.error('Header: onProfileClick prop is missing!');
+    }
   };
 
   return (

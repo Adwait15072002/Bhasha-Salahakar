@@ -4,16 +4,26 @@ import BottomNav from './BottomNav';
 import useProgress from '../hooks/useProgress';
 import { getUIStrings } from '../constants/uiStrings';
 
-const ProgressScreen = () => {
+const ProgressScreen = ({ user, onBack }) => {
   const nativeLanguage = 'hi';
   const uiStrings = getUIStrings(nativeLanguage);
   const { progressData } = useProgress();
+
+  const handleTabChange = (tab) => {
+    console.log('ProgressScreen tab clicked:', tab);
+    
+    if (tab === 'home') {
+      if (onBack) {
+        onBack();
+      }
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-orange-500 via-red-500 to-pink-500 flex flex-col">
       <Header 
         currentStreak={progressData.currentStreak}
-        userName="Priya"
+        userName={user?.name || "User"}
         uiStrings={uiStrings}
       />
 
@@ -65,7 +75,7 @@ const ProgressScreen = () => {
 
       <BottomNav 
         activeTab="progress"
-        onTabChange={(tab) => console.log(tab)}
+        onTabChange={handleTabChange}
         uiStrings={uiStrings}
       />
     </div>

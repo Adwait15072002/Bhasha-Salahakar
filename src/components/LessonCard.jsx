@@ -19,8 +19,17 @@ const LessonCard = ({
   } = lesson;
 
   const handleClick = () => {
+    console.log('LessonCard: Card clicked, lesson ID:', id, 'isLocked:', isLocked);
+    
     if (!isLocked) {
-      onStartLesson(id);
+      if (onStartLesson) {
+        console.log('LessonCard: Calling onStartLesson with ID:', id);
+        onStartLesson(id);
+      } else {
+        console.error('LessonCard: onStartLesson prop is missing!');
+      }
+    } else {
+      console.log('LessonCard: Lesson is locked, not starting');
     }
   };
 
@@ -44,7 +53,10 @@ const UnlockedLessonCard = ({ lesson, onStartLesson, languageFontFamily, uiStrin
   const { titleEnglish, titleNative, description, estimatedMinutes, phraseCount, emoji } = lesson;
 
   return (
-    <div className="bg-gradient-to-r from-orange-500 to-red-600 rounded-xl shadow-lg overflow-hidden">
+    <div 
+      className="bg-gradient-to-r from-orange-500 to-red-600 rounded-xl shadow-lg overflow-hidden cursor-pointer"
+      onClick={onStartLesson}
+    >
       <div className="p-6 text-white">
         <div className="flex items-start justify-between mb-4">
           <div className="flex-1">
@@ -84,7 +96,6 @@ const UnlockedLessonCard = ({ lesson, onStartLesson, languageFontFamily, uiStrin
 
         {/* Start Button - Native language */}
         <button
-          onClick={onStartLesson}
           className="w-full bg-white text-orange-600 py-3 rounded-lg font-semibold hover:bg-gray-100 transition flex items-center justify-center gap-2"
         >
           {uiStrings.startPractice}

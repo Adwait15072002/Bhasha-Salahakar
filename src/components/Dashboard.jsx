@@ -8,7 +8,7 @@ import BottomNav from './BottomNav';
 import useDashboard from '../hooks/useDashboard';
 import { getUIStrings } from '../constants/uiStrings';
 
-const Dashboard = () => {
+const Dashboard = ({ user, onStartLesson, onProfileClick }) => {
   const {
     userData,
     lessons,
@@ -22,13 +22,28 @@ const Dashboard = () => {
 
   const uiStrings = getUIStrings(userData.nativeLanguage);
 
+  const handleLessonClick = (lessonId) => {
+    console.log('Dashboard: Lesson clicked:', lessonId);
+    
+    // Call hook's internal handler
+    handleStartLesson(lessonId);
+    
+    // Call parent's navigation handler
+    if (onStartLesson) {
+      onStartLesson(lessonId);
+    } else {
+      console.error('onStartLesson prop not provided to Dashboard!');
+    }
+  };
+
   return (
     <div className="w-full min-h-screen bg-gradient-to-b from-orange-500 via-red-500 to-pink-500 flex flex-col">
       {/* Header */}
       <Header 
         currentStreak={userData.currentStreak}
-        userName={userData.name}
+        userName={user?.name || userData.name}  
         uiStrings={uiStrings}
+        onProfileClick={onProfileClick}  
       />
 
       {/* Main Content */}
@@ -41,7 +56,7 @@ const Dashboard = () => {
               <span style={{ fontFamily: currentLanguage.native.fontFamily }}>
                 {greetingMessage}
               </span>
-              , {userData.name}! 🙏
+              , {user?.name || userData.name}! 🙏
             </h1>
             <p className="text-white/90 text-lg drop-shadow">
               {uiStrings.learningStatus}{' '}
@@ -99,7 +114,7 @@ const Dashboard = () => {
                 <LessonCard
                   key={lesson.id}
                   lesson={lesson}
-                  onStartLesson={handleStartLesson}
+                  onStartLesson={handleLessonClick}
                   languageFontFamily={currentLanguage.learning.fontFamily}
                   uiStrings={uiStrings}
                 />
