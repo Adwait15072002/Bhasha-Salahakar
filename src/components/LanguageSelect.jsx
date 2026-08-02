@@ -22,7 +22,7 @@ const LanguageSelect = ({
 
   return (
     <div className="w-full">
-      <label className="block text-sm font-medium text-gray-700 mb-2">
+      <label className="block text-sm font-medium text-foreground mb-2">
         {label}
       </label>
       <select
@@ -30,7 +30,7 @@ const LanguageSelect = ({
         value={value}
         onChange={onChange}
         disabled={disabled}
-        className="w-full px-4 py-3 rounded-lg border-2 border-gray-300 focus:border-orange-500 focus:outline-none disabled:bg-gray-100"
+        className="w-full px-4 py-3 rounded-lg border-2 border-border bg-background text-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-ring/30 disabled:bg-muted disabled:opacity-70"
       >
         <option value="">Select language...</option>
         {filteredLanguages.map((lang) => (
@@ -39,7 +39,7 @@ const LanguageSelect = ({
           </option>
         ))}
       </select>
-      {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
+      {error && <p className="text-destructive text-sm mt-1">{error}</p>}
     </div>
   );
 };

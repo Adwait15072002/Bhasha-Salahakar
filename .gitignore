@@ -1,0 +1,10 @@
+node_modules/
+dist/
+.env
+.env.*
+!.env.example
+*.db
+uploads/
+.DS_Store
+Bhasha-Salahakar-Backend/
+*.csv

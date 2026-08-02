@@ -1,38 +1,24 @@
-//Manages UI of Header of our Dashboard
-
 import { MessageCircle, User, Flame } from 'lucide-react';
 
-const Header = ({ currentStreak, userName = 'User', uiStrings, onProfileClick}) => {
-  const handleProfileClick = () => {
-    console.log('Profile clicked');
-     if (onProfileClick) {
-      console.log('Header: Calling onProfileClick');
-      onProfileClick();
-    } else {
-      console.error('Header: onProfileClick prop is missing!');
-    }
-  };
-
+const Header = ({ currentStreak, userName = 'User', onProfileClick }) => {
   return (
-    <header className="px-6 py-4 flex items-center justify-between">
-      {/* Logo Section */}
+    <header className="px-6 py-4 flex items-center justify-between border-b border-border">
       <div className="flex items-center gap-3">
-        <MessageCircle className="w-8 h-8 text-white" />
-        <span className="text-xl font-bold text-white drop-shadow-lg">LanguageMentor</span>
+        <MessageCircle className="w-8 h-8 text-primary" />
+        <span className="text-xl font-bold text-foreground">Bhasha Salahakar</span>
       </div>
 
-      {/* Right Side: Streak and Profile */}
       <div className="flex items-center gap-4">
-        <div className="flex items-center gap-2 bg-white/20 backdrop-blur-sm px-3 py-2 rounded-lg border border-white/30">
-          <Flame className="w-5 h-5 text-orange-300" />
-          <span className="font-semibold text-white">{currentStreak} day streak</span>
+        <div className="flex items-center gap-2 bg-muted px-3 py-2 rounded-lg border border-border">
+          <Flame className="w-5 h-5 text-primary" />
+          <span className="font-semibold text-foreground text-sm">{currentStreak} day streak</span>
         </div>
         <button
-          onClick={handleProfileClick}
-          className="w-10 h-10 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white/30 transition-colors border border-white/30"
+          onClick={onProfileClick}
+          className="w-10 h-10 bg-muted rounded-full flex items-center justify-center hover:bg-accent transition-colors border border-border"
           aria-label={`${userName}'s profile`}
         >
-          <User className="w-5 h-5 text-white" />
+          <User className="w-5 h-5 text-foreground" />
         </button>
       </div>
     </header>

@@ -10,10 +10,10 @@ const Input = ({
   disabled = false,
   className = ""
 }) => {
-  const baseStyles = "w-full px-4 py-3 rounded-lg border-2 transition-colors duration-200";
-  const normalStyles = "border-gray-300 focus:border-orange-500 focus:outline-none";
-  const errorStyles = "border-red-500 focus:border-red-600 focus:outline-none";
-  const disabledStyles = "bg-gray-100 cursor-not-allowed";
+  const baseStyles = "w-full px-4 py-3 rounded-lg border-2 transition-colors duration-200 bg-background text-foreground";
+  const normalStyles = "border-border focus:border-primary focus:outline-none focus:ring-2 focus:ring-ring/30";
+  const errorStyles = "border-destructive focus:border-destructive focus:outline-none";
+  const disabledStyles = "bg-muted cursor-not-allowed opacity-70";
 
   const inputStyles = error 
     ? errorStyles 
@@ -34,7 +34,7 @@ const Input = ({
         className={`${baseStyles} ${inputStyles} ${className}`}
       />
       {error && (
-        <p className="text-red-500 text-sm mt-1">{error}</p>
+        <p className="text-destructive text-sm mt-1">{error}</p>
       )}
     </div>
   );

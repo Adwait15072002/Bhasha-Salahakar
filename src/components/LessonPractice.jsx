@@ -1,6 +1,5 @@
 /**
  * Lesson Practice Component
- * Main screen for voice-based lesson practice
  */
 
 import PracticeHeader from './PracticeHeader';
@@ -9,20 +8,15 @@ import RecordingButton from './RecordingButton';
 import FeedbackCard from './FeedbackCard';
 import useLessonPractice from '../hooks/useLessonPractice';
 import { getUIStrings } from '../constants/uiStrings';
+import { getLanguageInfo } from '../constants/languages';
 
-const LessonPractice = ({ user, onExit }) => {
+const LessonPractice = ({ user, categorySlug, onExit }) => {
   const nativeLanguage = user?.nativeLanguage || 'hi';
   const learningLanguage = user?.learningLanguage || 'kn';
-  
   const uiStrings = getUIStrings(nativeLanguage);
-  
   const languageInfo = {
-    hi: { name: 'Hindi', nativeName: 'हिन्दी', fontFamily: "'Noto Sans Devanagari', sans-serif" },
-    kn: { name: 'Kannada', nativeName: 'ಕನ್ನಡ', fontFamily: "'Noto Sans Kannada', sans-serif" },
-    ta: { name: 'Tamil', nativeName: 'தமிழ்', fontFamily: "'Noto Sans Tamil', sans-serif" },
-    te: { name: 'Telugu', nativeName: 'తెలుగు', fontFamily: "'Noto Sans Telugu', sans-serif" },
-    mr: { name: 'Marathi', nativeName: 'मराठी', fontFamily: "'Noto Sans Devanagari', sans-serif" },
-    en: { name: 'English', nativeName: 'English', fontFamily: "'Inter', sans-serif" }
+    [nativeLanguage]: getLanguageInfo(nativeLanguage),
+    [learningLanguage]: getLanguageInfo(learningLanguage)
   };
 
   const {
@@ -31,7 +25,6 @@ const LessonPractice = ({ user, onExit }) => {
     totalPhrases,
     progressPercentage,
     isRecording,
-    hasRecorded,
     isProcessing,
     showFeedback,
     feedback,
@@ -42,35 +35,31 @@ const LessonPractice = ({ user, onExit }) => {
     stopRecording,
     toggleRomanization,
     playOriginalAudio,
-    playUserRecording,
+    playPhrasePreview,
     tryAgain,
     nextPhrase,
-    previousPhrase,
-    exitLesson
-  } = useLessonPractice(user);
+    lessonComplete,
+    hasCorrectAudio,
+    isLoadingPreview
+  } = useLessonPractice(user, categorySlug);
 
-  // ✅ SHOW LOADING STATE
   if (isLoadingPhrases) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-orange-500 via-red-500 to-pink-500 flex items-center justify-center">
-        <div className="text-center text-white">
-          <div className="inline-block animate-spin rounded-full h-16 w-16 border-4 border-white border-t-transparent mb-4"></div>
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center text-muted-foreground">
+          <div className="inline-block animate-spin rounded-full h-16 w-16 border-4 border-primary border-t-transparent mb-4" />
           <p className="text-xl font-semibold">Loading phrases...</p>
         </div>
       </div>
     );
   }
 
-  // ✅ SHOW ERROR STATE
   if (error && !currentPhrase) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-orange-500 via-red-500 to-pink-500 flex items-center justify-center p-6">
-        <div className="bg-white rounded-2xl p-8 max-w-md text-center">
-          <p className="text-red-600 text-lg mb-4">❌ {error}</p>
-          <button
-            onClick={onExit}
-            className="bg-orange-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-orange-600"
-          >
+      <div className="min-h-screen bg-background flex items-center justify-center p-6">
+        <div className="bg-card border border-border rounded-2xl p-8 max-w-md text-center">
+          <p className="text-destructive text-lg mb-4">{error}</p>
+          <button onClick={onExit} className="bg-primary text-primary-foreground px-6 py-3 rounded-lg font-semibold">
             Back to Dashboard
           </button>
         </div>
@@ -78,16 +67,12 @@ const LessonPractice = ({ user, onExit }) => {
     );
   }
 
-  // ✅ CHECK IF CURRENT PHRASE EXISTS
   if (!currentPhrase) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-orange-500 via-red-500 to-pink-500 flex items-center justify-center p-6">
-        <div className="bg-white rounded-2xl p-8 max-w-md text-center">
-          <p className="text-gray-800 text-lg mb-4">No phrases available</p>
-          <button
-            onClick={onExit}
-            className="bg-orange-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-orange-600"
-          >
+      <div className="min-h-screen bg-background flex items-center justify-center p-6">
+        <div className="bg-card border border-border rounded-2xl p-8 max-w-md text-center">
+          <p className="text-foreground text-lg mb-4">No phrases available</p>
+          <button onClick={onExit} className="bg-primary text-primary-foreground px-6 py-3 rounded-lg font-semibold">
             Back to Dashboard
           </button>
         </div>
@@ -96,7 +81,7 @@ const LessonPractice = ({ user, onExit }) => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-orange-500 via-red-500 to-pink-500 flex flex-col">
+    <div className="min-h-screen bg-background flex flex-col">
       <PracticeHeader
         lessonTitle={uiStrings.lessonTitle}
         currentIndex={currentPhraseIndex}
@@ -108,10 +93,8 @@ const LessonPractice = ({ user, onExit }) => {
 
       <main className="flex-1 flex items-center justify-center p-8 overflow-auto">
         <div className="max-w-2xl w-full space-y-8">
-          
-          {/* Error Display */}
           {error && (
-            <div className="bg-red-500 text-white px-4 py-3 rounded-lg">
+            <div className="bg-destructive/10 text-destructive border border-destructive/30 px-4 py-3 rounded-lg">
               {error}
             </div>
           )}
@@ -122,13 +105,15 @@ const LessonPractice = ({ user, onExit }) => {
             romanizedText={currentPhrase.romanized}
             showRomanization={showRomanization}
             onToggleRomanization={toggleRomanization}
+            onListen={playPhrasePreview}
+            isLoadingPreview={isLoadingPreview}
             sourceFontFamily={languageInfo[nativeLanguage]?.fontFamily || 'sans-serif'}
             targetFontFamily={languageInfo[learningLanguage]?.fontFamily || 'sans-serif'}
             uiStrings={uiStrings}
             learningLanguageName={languageInfo[learningLanguage]?.nativeName || learningLanguage}
           />
 
-          {!showFeedback && (
+          {!showFeedback && !lessonComplete && (
             <RecordingButton
               isRecording={isRecording}
               onStart={startRecording}
@@ -140,23 +125,30 @@ const LessonPractice = ({ user, onExit }) => {
 
           {isProcessing && (
             <div className="text-center">
-              <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-white border-t-transparent"></div>
-              <p className="text-white mt-4 font-medium">{uiStrings.analyzing || 'Analyzing...'}</p>
+              <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-primary border-t-transparent" />
+              <p className="text-muted-foreground mt-4 font-medium">{uiStrings.analyzing || 'Analyzing...'}</p>
             </div>
           )}
 
-          {showFeedback && !isProcessing && feedback && (
+          {lessonComplete && (
+            <div className="bg-card border border-border rounded-xl p-6 text-center shadow-sm">
+              <p className="text-xl font-bold text-foreground mb-4">{uiStrings.lessonComplete}</p>
+              <button onClick={onExit} className="bg-primary text-primary-foreground px-6 py-3 rounded-lg font-semibold">
+                Back to Dashboard
+              </button>
+            </div>
+          )}
+
+          {showFeedback && !isProcessing && feedback && !lessonComplete && (
             <FeedbackCard
               feedback={feedback}
+              hasCorrectAudio={hasCorrectAudio}
               onPlayOriginal={playOriginalAudio}
-              onPlayRecording={playUserRecording}
               onTryAgain={tryAgain}
               onNext={nextPhrase}
               fontFamily={languageInfo[learningLanguage]?.fontFamily || 'sans-serif'}
-              uiStrings={uiStrings}
             />
           )}
-
         </div>
       </main>
     </div>

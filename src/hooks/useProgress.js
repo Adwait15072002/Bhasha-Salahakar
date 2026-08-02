@@ -1,27 +1,35 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { getProgress } from '../services/api/progress-service';
 
 const useProgress = () => {
-  const [progressData] = useState({
-    currentStreak: 5,
-    lessonsCompleted: 3,
-    totalMinutes: 67,
-    weeklyActivity: [
-      { day: 'M', minutes: 15 },
-      { day: 'T', minutes: 20 },
-      { day: 'W', minutes: 12 },
-      { day: 'T', minutes: 0 },
-      { day: 'F', minutes: 10 },
-      { day: 'S', minutes: 10 },
-      { day: 'S', minutes: 0 }
-    ],
-    skills: {
-      pronunciation: 85,
-      vocabulary: 72,
-      listening: 68
-    }
+  const [progressData, setProgressData] = useState({
+    currentStreak: 0,
+    lessonsCompleted: 0,
+    totalMinutes: 0,
+    weeklyActivity: [],
+    weeklyMinutes: 0,
+    weeklyAttempts: 0,
+    skills: { pronunciation: 0, vocabulary: 0, listening: 0 }
   });
+  const [isLoading, setIsLoading] = useState(true);
 
-  return { progressData };
+  useEffect(() => {
+    const fetchProgress = async () => {
+      try {
+        const response = await getProgress();
+        if (response.success) {
+          setProgressData(response.data);
+        }
+      } catch (err) {
+        console.error('Failed to load progress:', err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchProgress();
+  }, []);
+
+  return { progressData, isLoading };
 };
 
 export default useProgress;

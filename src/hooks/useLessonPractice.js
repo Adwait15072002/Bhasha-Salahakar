@@ -2,13 +2,12 @@
 import { useState, useRef, useEffect } from 'react';
 import { submitAudio, getTTS } from '../services/api/practice-service';
 import { getPhrases } from '../services/api/lesson-service';
+import { completeLesson } from '../services/api/progress-service';
+import { playAudioUrl } from '../utils/media';
 
-const useLessonPractice = (user) => {
-  // Phrases state
+const useLessonPractice = (user, categorySlug) => {
   const [phrases, setPhrases] = useState([]);
   const [isLoadingPhrases, setIsLoadingPhrases] = useState(true);
-  
-  // Practice state
   const [currentPhraseIndex, setCurrentPhraseIndex] = useState(0);
   const [isRecording, setIsRecording] = useState(false);
   const [hasRecorded, setHasRecorded] = useState(false);
@@ -17,12 +16,13 @@ const useLessonPractice = (user) => {
   const [feedback, setFeedback] = useState(null);
   const [showRomanization, setShowRomanization] = useState(true);
   const [isProcessing, setIsProcessing] = useState(false);
-  
-  // Audio playback state
   const [correctAudioUrl, setCorrectAudioUrl] = useState(null);
+  const [hasCorrectAudio, setHasCorrectAudio] = useState(false);
   const [isPlayingCorrect, setIsPlayingCorrect] = useState(false);
+  const [isLoadingPreview, setIsLoadingPreview] = useState(false);
   const [error, setError] = useState(null);
-  
+  const [lessonComplete, setLessonComplete] = useState(false);
+
   const mediaRecorderRef = useRef(null);
   const audioChunksRef = useRef([]);
   const correctAudioRef = useRef(null);
@@ -34,51 +34,27 @@ const useLessonPractice = (user) => {
     const fetchPhrases = async () => {
       try {
         setIsLoadingPhrases(true);
-        console.log('📚 Fetching phrases for:', `${nativeLanguage}-${learningLanguage}`);
-        
-        const response = await getPhrases(nativeLanguage, learningLanguage);
-        
-        if (response.success && response.data.phrases) {
+        const response = await getPhrases(nativeLanguage, learningLanguage, categorySlug);
+        if (response.success && response.data.phrases?.length) {
           setPhrases(response.data.phrases);
-          console.log('Loaded', response.data.phrases.length, 'phrases');
         } else {
-          setError('No phrases found for this language pair');
+          setError('No phrases found for this category');
         }
       } catch (err) {
         console.error('Failed to fetch phrases:', err);
-        setError('Failed to load phrases. Please try again.');
-        
-        
-        setPhrases([
-          {
-            id: 1,
-            sourceText: "नमस्ते, आप कैसे हैं?",
-            targetText: "ನಮಸ್ಕಾರ, ನೀವು ಹೇಗಿದ್ದೀರಿ?",
-            romanized: "Namaskāra, nīvu hēgiddīri?",
-            sourceLanguage: "hi",
-            targetLanguage: "kn"
-          },
-          {
-            id: 2,
-            sourceText: "मैं ठीक हूँ, धन्यवाद",
-            targetText: "ನಾನು ಚೆನ್ನಾಗಿದ್ದೇನೆ, ಧನ್ಯವಾದಗಳು",
-            romanized: "Nānu cennāgiddēne, dhan'yavādagaḷu",
-            sourceLanguage: "hi",
-            targetLanguage: "kn"
-          }
-        ]);
+        setError(err.response?.data?.message || 'Failed to load phrases');
       } finally {
         setIsLoadingPhrases(false);
       }
     };
 
-    fetchPhrases();
-  }, [nativeLanguage, learningLanguage]);
+    if (categorySlug) fetchPhrases();
+  }, [nativeLanguage, learningLanguage, categorySlug]);
 
   const currentPhrase = phrases[currentPhraseIndex];
   const totalPhrases = phrases.length;
-  const progressPercentage = totalPhrases > 0 
-    ? ((currentPhraseIndex + 1) / totalPhrases) * 100 
+  const progressPercentage = totalPhrases > 0
+    ? ((currentPhraseIndex + 1) / totalPhrases) * 100
     : 0;
 
   const startRecording = async () => {
@@ -89,16 +65,14 @@ const useLessonPractice = (user) => {
       audioChunksRef.current = [];
 
       mediaRecorder.ondataavailable = (event) => {
-        if (event.data.size > 0) {
-          audioChunksRef.current.push(event.data);
-        }
+        if (event.data.size > 0) audioChunksRef.current.push(event.data);
       };
 
       mediaRecorder.onstop = () => {
         const blob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
         setAudioBlob(blob);
         setHasRecorded(true);
-        stream.getTracks().forEach(track => track.stop());
+        stream.getTracks().forEach((track) => track.stop());
         processRecording(blob);
       };
 
@@ -106,207 +80,153 @@ const useLessonPractice = (user) => {
       setIsRecording(true);
       setShowFeedback(false);
       setError(null);
-      console.log('Recording started');
-      
-    } catch (error) {
-      console.error('Microphone error:', error);
+    } catch {
       setError('Please allow microphone access');
     }
   };
 
-  
   const stopRecording = () => {
     if (mediaRecorderRef.current && isRecording) {
       mediaRecorderRef.current.stop();
       setIsRecording(false);
-      console.log('Recording stopped');
     }
   };
 
-  
   const processRecording = async (blob) => {
-    if (!currentPhrase) {
-      setError('No phrase selected');
-      return;
-    }
-
+    if (!currentPhrase) return;
     setIsProcessing(true);
     setError(null);
 
     try {
-      console.log('Submitting audio to backend...');
-      console.log('Expected text:', currentPhrase.targetText);
-      console.log('Target language:', learningLanguage);
-      
-      // Submit audio to backend (Sarvam STT + LLM Feedback + TTS)
-      const response = await submitAudio(
-        blob,
-        currentPhrase.targetText,
-        learningLanguage
-      );
-
-      console.log('Backend response:', response);
-
-      if (response.success) {
+      const response = await submitAudio(blob, currentPhrase.targetText, learningLanguage);
+      if (response.success && response.data?.feedback) {
         setFeedback(response.data.feedback);
-        setCorrectAudioUrl(response.data.correctAudioUrl);
+        setCorrectAudioUrl(response.data.correctAudioUrl || null);
+        setHasCorrectAudio(Boolean(response.data.hasCorrectAudio ?? response.data.correctAudioUrl));
         setShowFeedback(true);
-        console.log('Score:', response.data.feedback.overallScore);
       } else {
         setError('Failed to process audio');
       }
-
     } catch (err) {
-      console.error('Error processing audio:', err);
-      setError(
-        err.response?.data?.message || 
-        'Failed to process audio. Please try again.'
-      );
+      setError(err.response?.data?.message || 'Failed to process audio');
     } finally {
       setIsProcessing(false);
     }
   };
 
-  
-  const toggleRomanization = () => setShowRomanization(prev => !prev);
+  const toggleRomanization = () => setShowRomanization((prev) => !prev);
 
-  
   const playOriginalAudio = () => {
     if (!correctAudioUrl) {
-      console.warn('No correct audio URL available yet');
-      setError('Please record your attempt first to hear the correct pronunciation');
+      setError('Correct pronunciation audio is not available yet');
       return;
     }
 
-    try {
-      // Create audio element if not exists
-      if (!correctAudioRef.current) {
-        correctAudioRef.current = new Audio();
-        correctAudioRef.current.onended = () => setIsPlayingCorrect(false);
-        correctAudioRef.current.onerror = (e) => {
-          console.error('Audio playback error:', e);
-          setIsPlayingCorrect(false);
-          setError('Failed to play audio');
-        };
-      }
+    if (!correctAudioRef.current) {
+      correctAudioRef.current = new Audio();
+      correctAudioRef.current.onended = () => setIsPlayingCorrect(false);
+      correctAudioRef.current.onerror = () => {
+        setIsPlayingCorrect(false);
+        setError('Failed to play audio');
+      };
+    }
 
-      // Construct full URL
-      const baseUrl = import.meta.env.VITE_API_BASE_URL.replace('/api', '');
-      const fullUrl = correctAudioUrl.startsWith('http') 
-        ? correctAudioUrl 
-        : `${baseUrl}${correctAudioUrl}`;
-      
-      console.log('Playing correct pronunciation:', fullUrl);
-      
-      correctAudioRef.current.src = fullUrl;
-      correctAudioRef.current.play();
+    const resolved = playAudioUrl(correctAudioUrl, (msg) => setError(msg));
+    if (resolved) {
+      correctAudioRef.current = resolved;
+      correctAudioRef.current.onended = () => setIsPlayingCorrect(false);
       setIsPlayingCorrect(true);
-      
-    } catch (err) {
-      console.error('Error playing audio:', err);
-      setError('Failed to play audio');
     }
   };
 
-  
+  const playPhrasePreview = async () => {
+    if (!currentPhrase) return;
+    setIsLoadingPreview(true);
+    setError(null);
+    try {
+      const response = await getTTS(currentPhrase.targetText, learningLanguage);
+      if (response.success && response.data?.audioUrl) {
+        playAudioUrl(response.data.audioUrl, (msg) => setError(msg));
+      } else {
+        setError('Could not load pronunciation preview');
+      }
+    } catch {
+      setError('Could not load pronunciation preview');
+    } finally {
+      setIsLoadingPreview(false);
+    }
+  };
+
   const playUserRecording = () => {
     if (audioBlob) {
-      try {
-        const url = URL.createObjectURL(audioBlob);
-        const audio = new Audio(url);
-        audio.play();
-        console.log('Playing user recording');
-      } catch (err) {
-        console.error('Error playing recording:', err);
-        setError('Failed to play recording');
-      }
+      const url = URL.createObjectURL(audioBlob);
+      new Audio(url).play();
     }
   };
 
-  
   const tryAgain = () => {
     setShowFeedback(false);
     setHasRecorded(false);
     setAudioBlob(null);
     setFeedback(null);
     setCorrectAudioUrl(null);
+    setHasCorrectAudio(false);
     setError(null);
-    console.log('Trying again');
   };
 
-  
+  const finishLesson = async () => {
+    try {
+      await completeLesson(categorySlug);
+    } catch (err) {
+      console.error('Failed to record lesson completion:', err);
+    }
+    setLessonComplete(true);
+  };
+
   const nextPhrase = () => {
     if (currentPhraseIndex < totalPhrases - 1) {
-      setCurrentPhraseIndex(prev => prev + 1);
-      setShowFeedback(false);
-      setHasRecorded(false);
-      setAudioBlob(null);
-      setFeedback(null);
-      setCorrectAudioUrl(null);
-      setError(null);
-      console.log('Next phrase');
+      setCurrentPhraseIndex((prev) => prev + 1);
+      tryAgain();
     } else {
-      alert('Lesson Complete!');
+      finishLesson();
     }
   };
 
-  
   const previousPhrase = () => {
     if (currentPhraseIndex > 0) {
-      setCurrentPhraseIndex(prev => prev - 1);
-      setShowFeedback(false);
-      setHasRecorded(false);
-      setAudioBlob(null);
-      setFeedback(null);
-      setCorrectAudioUrl(null);
-      setError(null);
-      console.log('Previous phrase');
-    }
-  };
-
-  
-  const exitLesson = () => {
-    if (window.confirm('Exit lesson? Progress will be saved.')) {
-      console.log('Exiting lesson');
+      setCurrentPhraseIndex((prev) => prev - 1);
+      tryAgain();
     }
   };
 
   return {
-    // Phrase data
     currentPhrase,
     currentPhraseIndex,
     totalPhrases,
     progressPercentage,
     isLoadingPhrases,
-    
-    // Recording state
     isRecording,
     hasRecorded,
     isProcessing,
     audioBlob,
-    
-    // Feedback state
     showFeedback,
     feedback,
-    
-    // Audio playback
     correctAudioUrl,
+    hasCorrectAudio,
     isPlayingCorrect,
-    
-    // UI state
+    isLoadingPreview,
     showRomanization,
     error,
-    
-    
+    lessonComplete,
     startRecording,
     stopRecording,
     toggleRomanization,
     playOriginalAudio,
+    playPhrasePreview,
     playUserRecording,
     tryAgain,
     nextPhrase,
-    previousPhrase,
-    exitLesson
+    previousPhrase
   };
 };
 

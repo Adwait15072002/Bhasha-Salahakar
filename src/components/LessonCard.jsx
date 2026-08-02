@@ -53,32 +53,22 @@ const UnlockedLessonCard = ({ lesson, onStartLesson, languageFontFamily, uiStrin
   const { titleEnglish, titleNative, description, estimatedMinutes, phraseCount, emoji } = lesson;
 
   return (
-    <div 
-      className="bg-gradient-to-r from-orange-500 to-red-600 rounded-xl shadow-lg overflow-hidden cursor-pointer"
+    <div
+      className="bg-primary text-primary-foreground rounded-xl shadow-lg overflow-hidden cursor-pointer hover:opacity-95 transition"
       onClick={onStartLesson}
     >
-      <div className="p-6 text-white">
+      <div className="p-6">
         <div className="flex items-start justify-between mb-4">
           <div className="flex-1">
-            {/* Badge */}
-            <div className="inline-block bg-white/20 text-white text-xs px-3 py-1 rounded-full mb-2">
+            <div className="inline-block bg-primary-foreground/20 text-xs px-3 py-1 rounded-full mb-2">
               {uiStrings.lessonCurrent}
             </div>
-
-            {/* Titles - Learning language */}
-            <h3 
-              className="text-2xl font-bold mb-1" 
-              style={{ fontFamily: languageFontFamily }}
-            >
+            <h3 className="text-2xl font-bold mb-1" style={{ fontFamily: languageFontFamily }}>
               {titleNative}
             </h3>
             <h4 className="text-xl mb-2 opacity-90">{titleEnglish}</h4>
-
-            {/* Description */}
-            <p className="text-white/90 text-sm mb-3">{description}</p>
-
-            {/* Metadata */}
-            <div className="flex items-center gap-4 text-sm text-white">
+            <p className="text-sm mb-3 opacity-90">{description}</p>
+            <div className="flex items-center gap-4 text-sm">
               <div className="flex items-center gap-1">
                 <Clock className="w-4 h-4" />
                 <span>{estimatedMinutes} {uiStrings.minutes}</span>
@@ -89,15 +79,9 @@ const UnlockedLessonCard = ({ lesson, onStartLesson, languageFontFamily, uiStrin
               </div>
             </div>
           </div>
-
-          {/* Emoji */}
           <div className="text-5xl">{emoji}</div>
         </div>
-
-        {/* Start Button - Native language */}
-        <button
-          className="w-full bg-white text-orange-600 py-3 rounded-lg font-semibold hover:bg-gray-100 transition flex items-center justify-center gap-2"
-        >
+        <button className="w-full bg-primary-foreground text-primary py-3 rounded-lg font-semibold hover:opacity-90 transition flex items-center justify-center gap-2">
           {uiStrings.startPractice}
           <ChevronRight className="w-5 h-5" />
         </button>
@@ -110,29 +94,19 @@ const LockedLessonCard = ({ lesson, languageFontFamily, uiStrings }) => {
   const { titleEnglish, titleNative, description, estimatedMinutes, phraseCount } = lesson;
 
   return (
-    <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg overflow-hidden opacity-90">
+    <div className="bg-card text-card-foreground rounded-xl shadow-lg overflow-hidden opacity-80 border border-border">
       <div className="p-6">
         <div className="flex items-start justify-between">
           <div className="flex-1">
-            {/* Badge */}
-            <div className="inline-block bg-gray-200 text-gray-600 text-xs px-3 py-1 rounded-full mb-2">
+            <div className="inline-block bg-muted text-muted-foreground text-xs px-3 py-1 rounded-full mb-2">
               {uiStrings.locked}
             </div>
-
-            {/* Titles - Learning language */}
-            <h3 
-              className="text-xl font-bold text-gray-800 mb-1"
-              style={{ fontFamily: languageFontFamily }}
-            >
+            <h3 className="text-xl font-bold mb-1" style={{ fontFamily: languageFontFamily }}>
               {titleNative}
             </h3>
             <h4 className="text-lg mb-2">{titleEnglish}</h4>
-
-            {/* Description */}
-            <p className="text-gray-600 text-sm mb-3">{description}</p>
-
-            {/* Metadata */}
-            <div className="flex items-center gap-4 text-sm text-gray-500">
+            <p className="text-muted-foreground text-sm mb-3">{description}</p>
+            <div className="flex items-center gap-4 text-sm text-muted-foreground">
               <div className="flex items-center gap-1">
                 <Clock className="w-4 h-4" />
                 <span>{estimatedMinutes} {uiStrings.minutes}</span>

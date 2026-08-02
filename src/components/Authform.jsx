@@ -7,34 +7,69 @@ import useAuthForm from '../hooks/useAuthForm';
 const AuthForm = ({ onAuthSuccess }) => {
   const {
     isLogin,
+    isForgotPassword,
     formData,
     error,
+    success,
     isLoading,
+    showSignupPrompt,
+    showForgotPassword,
     handleInputChange,
     handleSubmit,
-    toggleAuthMode
+    toggleAuthMode,
+    switchToSignup,
+    switchToForgotPassword,
+    switchToLogin
   } = useAuthForm();
 
   const onSubmit = async (e) => {
     e.preventDefault();
-    await handleSubmit(onAuthSuccess);
+    try {
+      await handleSubmit(onAuthSuccess);
+    } catch {
+      // error shown via hook state
+    }
   };
 
-  const isSignupMode = !isLogin;
-  const formTitle = isSignupMode ? 'Start Learning Free' : 'Welcome Back';
-  const submitButtonText = isSignupMode ? 'Sign Up Free' : 'Sign In';
+  const isSignupMode = !isLogin && !isForgotPassword;
+  const formTitle = isForgotPassword
+    ? 'Reset Password'
+    : isSignupMode
+      ? 'Start Learning Free'
+      : 'Welcome Back';
+  const submitButtonText = isForgotPassword
+    ? 'Update Password'
+    : isSignupMode
+      ? 'Sign Up Free'
+      : 'Sign In';
   const toggleText = isSignupMode ? 'Already have an account?' : "Don't have an account?";
   const toggleLinkText = isSignupMode ? 'Sign In' : 'Sign Up';
 
   return (
-    <div className="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md">
-      <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">
-        {formTitle}
-      </h2>
+    <div className="bg-card text-card-foreground rounded-2xl shadow-lg p-8 w-full max-w-md border border-border">
+      <h2 className="text-2xl font-bold text-foreground mb-6 text-center">{formTitle}</h2>
+
+      {success && (
+        <div className="mb-4 p-3 bg-primary/10 border border-primary/30 rounded-lg text-primary text-sm">
+          {success}
+        </div>
+      )}
 
       {error && (
-        <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm">
+        <div className="mb-4 p-3 bg-destructive/10 border border-destructive/30 rounded-lg text-destructive text-sm">
           {error}
+          {showSignupPrompt && (
+            <p className="mt-2 text-foreground">
+              Not registered?{' '}
+              <button
+                type="button"
+                onClick={() => switchToSignup(formData.email)}
+                className="text-primary font-medium hover:underline"
+              >
+                Create an account
+              </button>
+            </p>
+          )}
         </div>
       )}
 
@@ -60,7 +95,6 @@ const AuthForm = ({ onAuthSuccess }) => {
               onChange={handleInputChange}
               disabled={isLoading}
             />
-
             <LanguageSelect
               label="I want to learn:"
               name="learningLanguage"
@@ -85,7 +119,7 @@ const AuthForm = ({ onAuthSuccess }) => {
         <Input
           type="password"
           name="password"
-          placeholder="Password"
+          placeholder={isForgotPassword ? 'New Password' : 'Password'}
           value={formData.password}
           onChange={handleInputChange}
           disabled={isLoading}
@@ -93,25 +127,58 @@ const AuthForm = ({ onAuthSuccess }) => {
           minLength={6}
         />
 
-        <Button
-          type="submit"
-          variant="primary"
-          fullWidth
-          disabled={isLoading}
-        >
+        {isForgotPassword && (
+          <Input
+            type="password"
+            name="confirmPassword"
+            placeholder="Confirm New Password"
+            value={formData.confirmPassword}
+            onChange={handleInputChange}
+            disabled={isLoading}
+            required
+            minLength={6}
+          />
+        )}
+
+        <Button type="submit" variant="primary" fullWidth disabled={isLoading}>
           {isLoading ? 'Loading...' : submitButtonText}
         </Button>
       </form>
 
-      <p className="text-center text-sm text-gray-600 mt-6">
-        {toggleText}{' '}
-        <span 
-          onClick={toggleAuthMode}
-          className="text-orange-600 font-medium cursor-pointer hover:underline"
-        >
-          {toggleLinkText}
-        </span>
-      </p>
+      {showForgotPassword && (
+        <p className="text-center text-sm text-muted-foreground mb-4">
+          Having trouble signing in?{' '}
+          <button
+            type="button"
+            onClick={switchToForgotPassword}
+            className="text-primary font-medium hover:underline"
+          >
+            Forgot password?
+          </button>
+        </p>
+      )}
+
+      {isForgotPassword ? (
+        <p className="text-center text-sm text-muted-foreground">
+          <button
+            type="button"
+            onClick={() => switchToLogin(formData.email)}
+            className="text-primary font-medium hover:underline"
+          >
+            Back to Sign In
+          </button>
+        </p>
+      ) : (
+        <p className="text-center text-sm text-muted-foreground mt-6">
+          {toggleText}{' '}
+          <span
+            onClick={toggleAuthMode}
+            className="text-primary font-medium cursor-pointer hover:underline"
+          >
+            {toggleLinkText}
+          </span>
+        </p>
+      )}
     </div>
   );
 };

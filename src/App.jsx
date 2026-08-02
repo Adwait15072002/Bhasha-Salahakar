@@ -3,26 +3,39 @@ import Dashboard from './components/Dashboard';
 import LessonPractice from './components/LessonPractice';
 import LandingAuth from './components/Landingauth';
 import ProgressScreen from './components/ProgressScreen';
-import { getAuthData, isAuthenticated, clearAuthData} from './services/api/auth-service';
+import ArticlesScreen from './components/ArticlesScreen';
+import { getAuthData, isAuthenticated, clearAuthData, getMe } from './services/api/auth-service';
 import './App.css';
 import { useState, useEffect } from 'react';
 
 function App() {
-  // Authentication state
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState(null);
-
-  // Navigation state
   const [currentScreen, setCurrentScreen] = useState('auth');
-  const [selectedLesson, setSelectedLesson] = useState(null);
+  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [dashboardKey, setDashboardKey] = useState(0);
 
-   useEffect(() => {
-    if (isAuthenticated()) {
-      const authData = getAuthData();
-      setUser(authData.user);
-      setIsLoggedIn(true);
-      setCurrentScreen('dashboard');
-    }
+  useEffect(() => {
+    const initAuth = async () => {
+      if (!isAuthenticated()) return;
+      try {
+        const me = await getMe();
+        if (me.success) {
+          setUser(me.data.user);
+          setIsLoggedIn(true);
+          setCurrentScreen('dashboard');
+          return;
+        }
+      } catch {
+        const authData = getAuthData();
+        if (authData.user) {
+          setUser(authData.user);
+          setIsLoggedIn(true);
+          setCurrentScreen('dashboard');
+        }
+      }
+    };
+    initAuth();
   }, []);
 
   const handleAuthSuccess = (userData) => {
@@ -31,66 +44,64 @@ function App() {
     setCurrentScreen('dashboard');
   };
 
-  const handleStartLesson = (lessonId) => {
-    setSelectedLesson(lessonId);
+  const handleUserUpdate = (updatedUser) => {
+    setUser(updatedUser);
+    sessionStorage.setItem('userData', JSON.stringify(updatedUser));
+  };
+
+  const handleStartLesson = (categorySlug) => {
+    setSelectedCategory(categorySlug);
     setCurrentScreen('practice');
   };
 
-  const handleProfileClick = () => {
-    setCurrentScreen('progress');
-  };
-
-  const handleBackToDashboard = () => {
-    setCurrentScreen('dashboard');
-    setSelectedLesson(null);
-  };
-
   const handleLogout = () => {
-    console.log('App.jsx: Logging out...');
     if (window.confirm('Are you sure you want to logout?')) {
       clearAuthData();
       setUser(null);
       setIsLoggedIn(false);
       setCurrentScreen('auth');
-      setSelectedLesson(null);
-      
-      console.log('Logged out successfully');
+      setSelectedCategory(null);
     }
   };
 
   const renderScreen = () => {
-    if (!isLoggedIn) {
-      return <LandingAuth onAuthSuccess={handleAuthSuccess} />;
-    }
+    if (!isLoggedIn) return <LandingAuth onAuthSuccess={handleAuthSuccess} />;
 
     switch (currentScreen) {
       case 'dashboard':
         return (
-          <Dashboard 
-            user={user} 
+          <Dashboard
+            key={dashboardKey}
+            user={user}
             onStartLesson={handleStartLesson}
-            onProfileClick={handleProfileClick}
-            onLogout={handleLogout} 
+            onProfileClick={() => setCurrentScreen('progress')}
+            onLogout={handleLogout}
+            onUserUpdate={handleUserUpdate}
+            onOpenArticles={() => setCurrentScreen('articles')}
           />
         );
-      
       case 'practice':
         return (
-          <LessonPractice 
-            lessonId={selectedLesson}
+          <LessonPractice
+            categorySlug={selectedCategory}
             user={user}
-            onExit={handleBackToDashboard}
+            onExit={() => {
+              setSelectedCategory(null);
+              setDashboardKey((k) => k + 1);
+              setCurrentScreen('dashboard');
+            }}
           />
         );
-      
       case 'progress':
         return (
-          <ProgressScreen 
+          <ProgressScreen
             user={user}
-            onBack={handleBackToDashboard}
+            onBack={() => setCurrentScreen('dashboard')}
+            onLogout={handleLogout}
           />
         );
-      
+      case 'articles':
+        return <ArticlesScreen user={user} onBack={() => setCurrentScreen('dashboard')} />;
       default:
         return <LandingAuth onAuthSuccess={handleAuthSuccess} />;
     }
